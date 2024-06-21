@@ -3874,6 +3874,17 @@ th {
   display: flex;
   justify-content: center;
 }
+@media (max-width: 768px) {
+  .pdf-container {
+    height: 100vh;
+    padding: 0;
+  }
+
+  .pdf {
+    width: 100%;
+    height: 90vh; /* Adjust this value as needed for a good fit on mobile screens */
+  }
+}
 .container-abt {
   display: flex;
   /* flex-direction: column; */
