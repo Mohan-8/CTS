@@ -3882,7 +3882,7 @@ th {
 
   .pdf {
     width: 100%;
-    height: 90vh; /* Adjust this value as needed for a good fit on mobile screens */
+    height: 90vh;
   }
 }
 .container-abt {
