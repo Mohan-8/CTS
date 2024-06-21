@@ -6,10 +6,12 @@ const MembershipContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  margin-left: 4rem;
-  margin-right: 4rem;
+  margin: 1rem 4rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    margin: 1rem;
+  }
 `;
 
 const MembershipCard = styled.div`

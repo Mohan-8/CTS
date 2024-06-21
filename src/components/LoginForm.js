@@ -35,7 +35,7 @@ const LoginForm = () => {
     <div style={styles.container}>
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.formGroup}>
-          <img src="../../assert/headerlogo.png" />
+          <img src="../assert/logo.png" />
           <br />
           <label>
             Email:<span style={styles.span}>*</span>
