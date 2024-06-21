@@ -99,6 +99,7 @@ const MembershipOptions = () => {
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [showPayPalButton, setShowPayPalButton] = useState({});
   const [isSubmitDisabled, setIsSubmitDisabled] = useState({});
+  const [formErrors, setFormErrors] = useState({});
 
   const paypalRefs = useRef({});
 
@@ -119,8 +120,8 @@ const MembershipOptions = () => {
 
     if (validateFormInputs(formValues)) {
       setSelectedMembership(membership);
-      //   console.log("Form submitted for:", membership.type);
-      //   console.log("Form data:", formValues);
+      console.log("Form submitted for:", membership.type);
+      console.log("Form data:", formValues);
       setShowPayPalButton((prevState) => ({
         ...prevState,
         [membership.type]: true,
@@ -129,8 +130,11 @@ const MembershipOptions = () => {
         ...prevState,
         [membership.type]: true,
       }));
+      setFormErrors({});
     } else {
-      alert("Please fill out all required fields.");
+      setFormErrors({
+        [membership.type]: "Please fill out all required fields.",
+      });
     }
   };
 
@@ -202,27 +206,30 @@ const MembershipOptions = () => {
           >
             <label>
               First Name<span>*</span>:
-              <input type="text" name="firstName" required />
+              <input type="text" name="firstName"/>
             </label>
             <br />
             <label>
               Last Name<span>*</span>:
-              <input type="text" name="lastName" required />
+              <input type="text" name="lastName" />
             </label>
             <br />
             <label>
               Email<span>*</span>:
-              <input type="email" name="email" required />
+              <input type="email" name="email"  />
             </label>
             <br />
             <label>
               Phone<span>*</span>:
-              <input type="tel" name="phone" required />
+              <input type="tel" name="phone" />
             </label>
             <br />
             <button type="submit" disabled={isSubmitDisabled[membership.type]}>
               Submit
             </button>
+            {formErrors[membership.type] && (
+              <ErrorAlert>{formErrors[membership.type]}</ErrorAlert>
+            )}
           </SignUpForm>
           {showPayPalButton[membership.type] && (
             <div ref={(el) => (paypalRefs.current[membership.type] = el)}>
@@ -234,7 +241,7 @@ const MembershipOptions = () => {
               />
             </div>
           )}
-          {selectedMembership !== membership && (
+          {!showSignUpForm[membership.type] && (
             <button className="button" onClick={() => handleSignUp(membership)}>
               Sign Up
             </button>
