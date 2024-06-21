@@ -3735,6 +3735,23 @@ body.page-id-1688 #mepr-account-logout {
   text-decoration: none;
   color: #ff0000;
 }
+@media (max-width: 600px) {
+  .month-name {
+    font-size: 1em;
+  }
+
+  .weekdays div,
+  .days-container div {
+    padding: 5px;
+    font-size: 0.8em;
+  }
+
+  .prev,
+  .next {
+    font-size: 1em;
+    padding: 0 5px;
+  }
+}
 .event-details {
   background-color: #fff;
   padding: 20px;
@@ -3953,8 +3970,7 @@ table {
   justify-content: center;
   align-items: center;
 }
-.Past-events{
+.Past-events {
   width: 90%;
   margin: 0 auto;
-
 }

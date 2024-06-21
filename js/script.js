@@ -148,6 +148,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
     }
   }
+
   document.querySelector(".prev").addEventListener("click", () => {
     currentMonth--;
     if (currentMonth < 0) {
@@ -165,9 +166,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
     generateCalendar(currentMonth, currentYear);
   });
+
   await fetchEventsFromCSV();
 });
-
 //table view
 document.addEventListener("DOMContentLoaded", async function () {
   let events = [];
