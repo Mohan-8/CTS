@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import axios from "axios";
+
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [message, setMessage] = useState("");
 
   const validate = () => {
     const newErrors = {};
@@ -19,15 +22,24 @@ const LoginForm = () => {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    // console.log(email, password);
     e.preventDefault();
     const newErrors = validate();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
-      console.log("Email:", email);
-      console.log("Password:", password);
-      setErrors({});
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/api/users/login",
+          { email, password }
+        );
+        console.log("Token:", response.data.token);
+        setMessage("Login successful!");
+        setErrors({});
+      } catch (error) {
+        setErrors({ form: error.response.data.error });
+      }
     }
   };
 
@@ -60,6 +72,8 @@ const LoginForm = () => {
           />
           {errors.password && <div style={styles.error}>{errors.password}</div>}
         </div>
+        {errors.form && <div style={styles.error}>{errors.form}</div>}
+        {message && <div style={styles.success}>{message}</div>}
         <button type="submit" style={styles.button}>
           Login
         </button>
@@ -111,6 +125,11 @@ const styles = {
   },
   error: {
     color: "red",
+    fontSize: "0.875rem",
+    marginTop: "0.25rem",
+  },
+  success: {
+    color: "green",
     fontSize: "0.875rem",
     marginTop: "0.25rem",
   },

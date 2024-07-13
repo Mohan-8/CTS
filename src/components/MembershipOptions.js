@@ -1,6 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import PayPalButton from "./paypal";
+import axios from "axios";
 
 const MembershipContainer = styled.div`
   display: grid;
@@ -76,94 +76,93 @@ const SignUpForm = styled.form`
   }
 `;
 
-const SuccessAlert = styled.div`
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-  padding: 0.75rem 1.25rem;
-  border-radius: 4px;
-  margin-top: 1rem;
+const ErrorOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: ${(props) => (props.visible ? "flex" : "none")};
+  justify-content: center;
+  align-items: center;
 `;
 
 const ErrorAlert = styled.div`
   background-color: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
-  padding: 0.75rem 1.25rem;
+  padding: 1rem;
   border-radius: 4px;
-  margin-top: 1rem;
+  text-align: center;
+
+  button {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 1em;
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
 `;
 
 const MembershipOptions = () => {
   const [selectedMembership, setSelectedMembership] = useState(null);
   const [showSignUpForm, setShowSignUpForm] = useState({});
-  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
-  const [showErrorAlert, setShowErrorAlert] = useState(false);
-  const [showPayPalButton, setShowPayPalButton] = useState({});
   const [isSubmitDisabled, setIsSubmitDisabled] = useState({});
   const [formErrors, setFormErrors] = useState({});
-
-  const paypalRefs = useRef({});
+  const [errorOverlayVisible, setErrorOverlayVisible] = useState(false);
+  const [errorFromBackend, setErrorFromBackend] = useState("");
 
   const handleSignUp = (membership) => {
+    setSelectedMembership(membership);
     setShowSignUpForm((prevState) => ({
       ...Object.fromEntries(
         Object.keys(prevState).map((key) => [key, key === membership.type])
       ),
       [membership.type]: !prevState[membership.type],
     }));
-    setSelectedMembership(membership);
   };
 
-  const handleSubmit = (e, membership) => {
+  const handleSubmit = async (e, membership) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const formValues = Object.fromEntries(formData.entries());
 
-    if (validateFormInputs(formValues)) {
-      setSelectedMembership(membership);
-      console.log("Form submitted for:", membership.type);
-      console.log("Form data:", formValues);
-      setShowPayPalButton((prevState) => ({
-        ...prevState,
-        [membership.type]: true,
-      }));
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/users/signup",
+        {
+          ...formValues,
+          membershipType: membership.type,
+          price: membership.price,
+        }
+      );
+
+      console.log(response.data.Token);
+      localStorage.setItem("jwtToken", response.data.Token);
+      // setJwtToken(response.data.Token);
+      console.log(response.data.forwardLink);
+      const forwardLink = response.data.forwardLink;
+      window.location.href = forwardLink;
       setIsSubmitDisabled((prevState) => ({
         ...prevState,
         [membership.type]: true,
       }));
+      setShowSignUpForm({});
       setFormErrors({});
-    } else {
-      setFormErrors({
-        [membership.type]: "Please fill out all required fields.",
-      });
+    } catch (error) {
+      console.error("Error submitting form:", error.response.data.error);
+      setErrorFromBackend(error.response.data.error);
+      setErrorOverlayVisible(true);
     }
   };
 
-  const validateFormInputs = (formData) => {
-    const requiredFields = ["firstName", "lastName", "email", "phone"];
-    for (const field of requiredFields) {
-      if (!formData[field]) {
-        return false;
-      }
-    }
-    return true;
-  };
-
-  const handlePaymentSuccess = (membership) => {
-    setShowSuccessAlert(true);
-    setSelectedMembership(membership);
-    const formData = new FormData(
-      document.getElementById(`form-${membership.type}`)
-    );
-    const formValues = Object.fromEntries(formData.entries());
-    console.log("Form data:", formValues);
-    console.log("Membership type:", membership.type);
-  };
-
-  const handlePaymentError = (membership) => {
-    setShowErrorAlert(true);
-    setSelectedMembership(membership);
+  const closeErrorOverlay = () => {
+    setErrorOverlayVisible(false);
+    setErrorFromBackend("");
   };
 
   const membershipOptions = [
@@ -208,22 +207,22 @@ const MembershipOptions = () => {
           >
             <label>
               First Name<span>*</span>:
-              <input type="text" name="firstName"/>
+              <input type="text" name="firstName" required />
             </label>
             <br />
             <label>
               Last Name<span>*</span>:
-              <input type="text" name="lastName" />
+              <input type="text" name="lastName" required />
             </label>
             <br />
             <label>
               Email<span>*</span>:
-              <input type="email" name="email"  />
+              <input type="email" name="email" required />
             </label>
             <br />
             <label>
               Phone<span>*</span>:
-              <input type="tel" name="phone" />
+              <input type="tel" name="phone" required />
             </label>
             <br />
             <button type="submit" disabled={isSubmitDisabled[membership.type]}>
@@ -233,16 +232,6 @@ const MembershipOptions = () => {
               <ErrorAlert>{formErrors[membership.type]}</ErrorAlert>
             )}
           </SignUpForm>
-          {showPayPalButton[membership.type] && (
-            <div ref={(el) => (paypalRefs.current[membership.type] = el)}>
-              <PayPalButton
-                amount={membership.price}
-                onSuccess={() => handlePaymentSuccess(membership)}
-                onError={() => handlePaymentError(membership)}
-                className="button"
-              />
-            </div>
-          )}
           {!showSignUpForm[membership.type] && (
             <button className="button" onClick={() => handleSignUp(membership)}>
               Sign Up
@@ -250,14 +239,13 @@ const MembershipOptions = () => {
           )}
         </MembershipCard>
       ))}
-      {showSuccessAlert && (
-        <SuccessAlert>
-          Payment succeeded! Thank you for signing up.
-        </SuccessAlert>
-      )}
-      {showErrorAlert && (
-        <ErrorAlert>Payment failed! Please try again.</ErrorAlert>
-      )}
+      <ErrorOverlay visible={errorOverlayVisible}>
+        <ErrorAlert>
+          {errorFromBackend}
+          <br />
+          <button onClick={closeErrorOverlay}>OK</button>
+        </ErrorAlert>
+      </ErrorOverlay>
     </MembershipContainer>
   );
 };
