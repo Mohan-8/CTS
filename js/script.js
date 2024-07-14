@@ -224,7 +224,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 window.onload = function () {
   if (window.location.pathname.includes("/components/user.html")) {
     const token = localStorage.getItem("jwtToken");
-    console.log("Token from localStorage:", token);
+    // console.log("Token from localStorage:", token);
 
     if (!token) {
       blockAccess();
@@ -232,14 +232,15 @@ window.onload = function () {
     } else {
       try {
         const decoded = parseJwt(token);
-        console.log("Decoded Token:", decoded);
+        // console.log("Decoded Token:", decoded);
 
         const currentTime = Math.floor(Date.now() / 1000);
         if (decoded.exp < currentTime) {
           alert("Session expired. Please log in again.");
           redirectToLoginPage();
         } else {
-          console.log("Token is valid.");
+          // console.log("Token is valid.");
+          updateNavigationForUser();
         }
       } catch (error) {
         console.error("Error decoding token:", error);
@@ -270,4 +271,70 @@ function parseJwt(token) {
   );
 
   return JSON.parse(jsonPayload);
+}
+
+window.onload = function () {
+  const token = localStorage.getItem("jwtToken");
+  if (token) {
+    // console.log("Token from localStorage:", token);
+    try {
+      const decoded = parseJwt(token);
+      // console.log("Decoded Token:", decoded);
+      const currentTime = Math.floor(Date.now() / 1000);
+      if (decoded.exp < currentTime) {
+        // alert("Session expired. Please log in again.");
+      } else {
+        // console.log("Token is valid.");
+        updateNavigationForUser();
+      }
+    } catch (error) {
+      console.error("Error decoding token:", error);
+    }
+  }
+};
+
+function updateNavigationForUser() {
+  const menuItem = document.getElementById("menu-item-2344");
+  const mmenu = document.getElementById("mobilemenu-item-2344");
+  const member = document.getElementById("menu-item-1765");
+  const mmember = document.getElementById("mobilemenu-item-1765");
+  if (window.location.pathname.includes("/index.html")) {
+    if (menuItem) {
+      menuItem.innerHTML = `
+      <a href="components/user.html" class="menu-link">
+        <img width="24" height="24" src="https://img.icons8.com/material-outlined/24/user--v1.png" alt="user--v1" />
+      </a>
+    `;
+      mmenu.innerHTML = `
+      <a href="components/user.html" class="menu-link">
+        <img width="24" height="24" src="https://img.icons8.com/material-outlined/24/user--v1.png" alt="user--v1" />
+      </a>
+    `;
+      member.innerHTML = `
+      
+    `;
+      mmember.innerHTML = `
+      
+    `;
+    }
+  } else if (window.location.pathname.includes("/components")) {
+    if (menuItem) {
+      menuItem.innerHTML = `
+      <a href="user.html" class="menu-link">
+        <img width="24" height="24" src="https://img.icons8.com/material-outlined/24/user--v1.png" alt="user--v1" />
+      </a>
+    `;
+      mmenu.innerHTML = `
+      <a href="user.html" class="menu-link">
+        <img width="24" height="24" src="https://img.icons8.com/material-outlined/24/user--v1.png" alt="user--v1" />
+      </a>
+    `;
+      member.innerHTML = `
+      
+    `;
+      mmember.innerHTML = `
+      
+    `;
+    }
+  }
 }
