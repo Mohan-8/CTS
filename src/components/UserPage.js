@@ -34,7 +34,7 @@ const UserPage = () => {
         const id = decoded.userId;
 
         const response = await axios.get(
-          `http://localhost:5000/api/users/getUserDetails/${id}`
+          `https://cts-backend-three.vercel.app/api/users/getUserDetails/${id}`
         );
 
         setUserDetails(response.data);
@@ -70,7 +70,7 @@ const UserPage = () => {
       const id = decoded.userId;
       console.log(userDetails);
       await axios.put(
-        `http://localhost:5000/api/users/updateUserDetails/${id}`,
+        `https://cts-backend-three.vercel.app/api/users/updateUserDetails/${id}`,
         userDetails
       );
       alert("Details updated successfully!");
