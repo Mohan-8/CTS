@@ -5,13 +5,22 @@ module.exports = {
   mode: "production",
   entry: {
     "member-signup": "./src/index.js",
-    "login": "./src/login.js",
-    "user": "./src/user.js", // Add the entry for user.js
+    login: "./src/login.js",
+    user: "./src/user.js", // Add the entry for user.js
   },
   output: {
     filename: "[name].bundle.js",
     path: path.resolve(__dirname, "dist"),
     publicPath: "/", // Add this line if not already present
+  },
+  devServer: {
+    proxy: {
+      "/api": {
+        target: "https://cts-backend-red.vercel.app",
+        secure: false,
+        changeOrigin: true,
+      },
+    },
   },
   module: {
     rules: [
@@ -51,7 +60,7 @@ module.exports = {
       chunks: ["login"],
     }),
     new HtmlWebpackPlugin({
-      template: "./components/user.html", 
+      template: "./components/user.html",
       filename: "user.html",
       chunks: ["user"],
     }),
