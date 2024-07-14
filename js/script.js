@@ -219,3 +219,55 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
   await fetchEventsFromCSV();
 });
+
+// Check if the current page is user.html and block manual access if token is missing
+window.onload = function () {
+  if (window.location.pathname.includes("/components/user.html")) {
+    const token = localStorage.getItem("jwtToken");
+    console.log("Token from localStorage:", token);
+
+    if (!token) {
+      blockAccess();
+      redirectToLoginPage();
+    } else {
+      try {
+        const decoded = parseJwt(token);
+        console.log("Decoded Token:", decoded);
+
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (decoded.exp < currentTime) {
+          alert("Session expired. Please log in again.");
+          redirectToLoginPage();
+        } else {
+          console.log("Token is valid.");
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        redirectToLoginPage();
+      }
+    }
+  }
+};
+
+function blockAccess() {
+  console.log("Access blocked.");
+}
+
+function redirectToLoginPage() {
+  window.location.href = "/components/login.html";
+}
+
+function parseJwt(token) {
+  const base64Url = token.split(".")[1];
+  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  const jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+
+  return JSON.parse(jsonPayload);
+}

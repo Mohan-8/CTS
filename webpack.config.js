@@ -5,7 +5,8 @@ module.exports = {
   mode: "production",
   entry: {
     "member-signup": "./src/index.js",
-    login: "./src/login.js",
+    "login": "./src/login.js",
+    "user": "./src/user.js", // Add the entry for user.js
   },
   output: {
     filename: "[name].bundle.js",
@@ -49,10 +50,18 @@ module.exports = {
       filename: "login.html",
       chunks: ["login"],
     }),
+    new HtmlWebpackPlugin({
+      template: "./components/user.html", 
+      filename: "user.html",
+      chunks: ["user"],
+    }),
   ],
   devServer: {
-    contentBase: path.join(__dirname, "dist"),
+    static: {
+      directory: path.join(__dirname, "dist"),
+    },
     compress: true,
     port: 9000,
+    historyApiFallback: true, // This helps with client-side routing
   },
 };

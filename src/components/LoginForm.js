@@ -34,9 +34,11 @@ const LoginForm = () => {
           "http://localhost:5000/api/users/login",
           { email, password }
         );
-        console.log("Token:", response.data.token);
+        console.log("jwtToken:", response.data.token);
         setMessage("Login successful!");
         setErrors({});
+        localStorage.setItem("jwtToken", response.data.Token);
+        window.location.href = "/components/user.html";
       } catch (error) {
         setErrors({ form: error.response.data.error });
       }
