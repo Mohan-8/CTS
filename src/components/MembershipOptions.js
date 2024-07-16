@@ -108,6 +108,36 @@ const ErrorAlert = styled.div`
   }
 `;
 
+const LoadingOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: ${(props) => (props.visible ? "flex" : "none")};
+  justify-content: center;
+  align-items: center;
+`;
+
+const LoadingSpinner = styled.div`
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #3498db;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 2s linear infinite;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
 const MembershipOptions = () => {
   const [selectedMembership, setSelectedMembership] = useState(null);
   const [showSignUpForm, setShowSignUpForm] = useState({});
@@ -115,6 +145,7 @@ const MembershipOptions = () => {
   const [formErrors, setFormErrors] = useState({});
   const [errorOverlayVisible, setErrorOverlayVisible] = useState(false);
   const [errorFromBackend, setErrorFromBackend] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSignUp = (membership) => {
     setSelectedMembership(membership);
@@ -128,12 +159,13 @@ const MembershipOptions = () => {
 
   const handleSubmit = async (e, membership) => {
     e.preventDefault();
+    setLoading(true);
     const formData = new FormData(e.target);
     const formValues = Object.fromEntries(formData.entries());
 
     try {
       const response = await axios.post(
-        "https://cts-backend-three.vercel.app/api/users/signup",
+        "http://127.0.0.1:5000/api/users/signup",
         {
           ...formValues,
           membershipType: membership.type,
@@ -141,10 +173,7 @@ const MembershipOptions = () => {
         }
       );
 
-      console.log(response.data.Token);
       localStorage.setItem("jwtToken", response.data.Token);
-      // setJwtToken(response.data.Token);
-      console.log(response.data.forwardLink);
       const forwardLink = response.data.forwardLink;
       window.location.href = forwardLink;
       setIsSubmitDisabled((prevState) => ({
@@ -157,6 +186,8 @@ const MembershipOptions = () => {
       console.error("Error submitting form:", error.response.data.error);
       setErrorFromBackend(error.response.data.error);
       setErrorOverlayVisible(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -192,61 +223,72 @@ const MembershipOptions = () => {
   ];
 
   return (
-    <MembershipContainer>
-      {membershipOptions.map((membership, index) => (
-        <MembershipCard key={index}>
-          <MembershipTitle>{membership.type}</MembershipTitle>
-          <MembershipPrice>${membership.price}.00 (USD)</MembershipPrice>
-          <MembershipDescription>
-            {membership.description}
-          </MembershipDescription>
-          <SignUpForm
-            id={`form-${membership.type}`}
-            visible={showSignUpForm[membership.type]}
-            onSubmit={(e) => handleSubmit(e, membership)}
-          >
-            <label>
-              First Name<span>*</span>:
-              <input type="text" name="firstName" required />
-            </label>
-            <br />
-            <label>
-              Last Name<span>*</span>:
-              <input type="text" name="lastName" required />
-            </label>
-            <br />
-            <label>
-              Email<span>*</span>:
-              <input type="email" name="email" required />
-            </label>
-            <br />
-            <label>
-              Phone<span>*</span>:
-              <input type="tel" name="phone" required />
-            </label>
-            <br />
-            <button type="submit" disabled={isSubmitDisabled[membership.type]}>
-              Submit
-            </button>
-            {formErrors[membership.type] && (
-              <ErrorAlert>{formErrors[membership.type]}</ErrorAlert>
+    <>
+      <MembershipContainer>
+        {membershipOptions.map((membership, index) => (
+          <MembershipCard key={index}>
+            <MembershipTitle>{membership.type}</MembershipTitle>
+            <MembershipPrice>${membership.price}.00 (USD)</MembershipPrice>
+            <MembershipDescription>
+              {membership.description}
+            </MembershipDescription>
+            <SignUpForm
+              id={`form-${membership.type}`}
+              visible={showSignUpForm[membership.type]}
+              onSubmit={(e) => handleSubmit(e, membership)}
+            >
+              <label>
+                First Name<span>*</span>:
+                <input type="text" name="firstName" required />
+              </label>
+              <br />
+              <label>
+                Last Name<span>*</span>:
+                <input type="text" name="lastName" required />
+              </label>
+              <br />
+              <label>
+                Email<span>*</span>:
+                <input type="email" name="email" required />
+              </label>
+              <br />
+              <label>
+                Phone<span>*</span>:
+                <input type="tel" name="phone" required />
+              </label>
+              <br />
+              <button
+                type="submit"
+                disabled={isSubmitDisabled[membership.type]}
+              >
+                Submit
+              </button>
+              {formErrors[membership.type] && (
+                <ErrorAlert>{formErrors[membership.type]}</ErrorAlert>
+              )}
+            </SignUpForm>
+            {!showSignUpForm[membership.type] && (
+              <button
+                className="button"
+                onClick={() => handleSignUp(membership)}
+              >
+                Sign Up
+              </button>
             )}
-          </SignUpForm>
-          {!showSignUpForm[membership.type] && (
-            <button className="button" onClick={() => handleSignUp(membership)}>
-              Sign Up
-            </button>
-          )}
-        </MembershipCard>
-      ))}
-      <ErrorOverlay visible={errorOverlayVisible}>
-        <ErrorAlert>
-          {errorFromBackend}
-          <br />
-          <button onClick={closeErrorOverlay}>OK</button>
-        </ErrorAlert>
-      </ErrorOverlay>
-    </MembershipContainer>
+          </MembershipCard>
+        ))}
+        <ErrorOverlay visible={errorOverlayVisible}>
+          <ErrorAlert>
+            {errorFromBackend}
+            <br />
+            <button onClick={closeErrorOverlay}>OK</button>
+          </ErrorAlert>
+        </ErrorOverlay>
+      </MembershipContainer>
+      <LoadingOverlay visible={loading}>
+        <LoadingSpinner />
+      </LoadingOverlay>
+    </>
   );
 };
 

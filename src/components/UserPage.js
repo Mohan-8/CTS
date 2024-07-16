@@ -25,7 +25,7 @@ const UserPage = () => {
       const token = localStorage.getItem("jwtToken");
       if (!token) {
         alert("Invalid session. Please log in.");
-        window.location.href = "/login.html";
+        window.location.href = "/components/login.html";
         return;
       }
 
@@ -34,7 +34,7 @@ const UserPage = () => {
         const id = decoded.userId;
 
         const response = await axios.get(
-          `https://cts-backend-three.vercel.app/api/users/getUserDetails/${id}`
+          `http://127.0.0.1:5000/api/users/getUserDetails/${id}`
         );
 
         setUserDetails(response.data);
@@ -68,9 +68,9 @@ const UserPage = () => {
 
       const decoded = jwtDecode(token);
       const id = decoded.userId;
-      console.log(userDetails);
+      // console.log(userDetails);
       await axios.put(
-        `https://cts-backend-three.vercel.app/api/users/updateUserDetails/${id}`,
+        `http://127.0.0.1:5000/api/users/updateUserDetails/${id}`,
         userDetails
       );
       alert("Details updated successfully!");
@@ -96,6 +96,7 @@ const UserPage = () => {
   };
   const handleLogout = () => {
     localStorage.removeItem("jwtToken");
+    localStorage.removeItem("type");
     window.location.href = "/";
   };
   return (
@@ -234,7 +235,11 @@ const UserPage = () => {
                     <p>
                       <strong>Payment Status:</strong> Pending
                     </p>
-                    <a href={payment_link} target="_blank">
+                    <a
+                      href={payment_link}
+                      target="_blank"
+                      style={styles.button}
+                    >
                       Pay
                     </a>
                     <br />
@@ -242,7 +247,7 @@ const UserPage = () => {
                 )}
               </>
             )}
-            <button onClick={handleLogout} style={styles.logoutButton}>
+            <button onClick={handleLogout} style={styles.button}>
               Logout
             </button>
           </div>
@@ -315,7 +320,7 @@ const styles = {
     backgroundColor: "#007bff",
     color: "#fff",
     border: "none",
-    borderRadius: "4px",
+    borderRadius: "50px",
     cursor: "pointer",
     transition: "background-color 0.3s ease",
     marginTop: "1rem",

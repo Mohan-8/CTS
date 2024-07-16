@@ -237,6 +237,7 @@ window.onload = function () {
         const currentTime = Math.floor(Date.now() / 1000);
         if (decoded.exp < currentTime) {
           alert("Session expired. Please log in again.");
+          localStorage.removeItem("type");
           redirectToLoginPage();
         } else {
           // console.log("Token is valid.");
@@ -249,9 +250,18 @@ window.onload = function () {
     }
   }
 };
-
+window.onload = function () {
+  if (window.location.pathname.includes("/components/admin.html")) {
+    const token = localStorage.getItem("type");
+    console.log("Token from localStorage:", token);
+    if (!token) {
+      blockAccess();
+      redirectToLoginPage();
+    }
+  }
+};
 function blockAccess() {
-  console.log("Access blocked.");
+  alert("Access blocked.");
 }
 
 function redirectToLoginPage() {

@@ -31,14 +31,20 @@ const LoginForm = () => {
     } else {
       try {
         const response = await axios.post(
-          "https://cts-backend-three.vercel.app//api/users/login",
+          "http://127.0.0.1:5000/api/users/login",
           { email, password }
         );
-        console.log("jwtToken:", response.data.token);
+        // console.log(response.data.membership_type);
+        // console.log("jwtToken:", response.data.token);
         setMessage("Login successful!");
         setErrors({});
         localStorage.setItem("jwtToken", response.data.Token);
-        window.location.href = "/components/user.html";
+        localStorage.setItem("type", response.data.membership_type);
+        if (response.data.membership_type == "admin") {
+          window.location.href = "/components/admin.html";
+        } else {
+          window.location.href = "/components/user.html";
+        }
       } catch (error) {
         setErrors({ form: error.response.data.error });
       }

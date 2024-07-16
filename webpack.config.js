@@ -6,7 +6,8 @@ module.exports = {
   entry: {
     "member-signup": "./src/index.js",
     login: "./src/login.js",
-    user: "./src/user.js", // Add the entry for user.js
+    user: "./src/user.js",
+    admin: "./src/admin.js",
   },
   output: {
     filename: "[name].bundle.js",
@@ -63,6 +64,11 @@ module.exports = {
       template: "./components/user.html",
       filename: "user.html",
       chunks: ["user"],
+    }),
+    new HtmlWebpackPlugin({
+      template: "./components/admin.html",
+      filename: "admin.html",
+      chunks: ["admin"],
     }),
   ],
   devServer: {
