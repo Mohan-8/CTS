@@ -348,3 +348,10 @@ function updateNavigationForUser() {
     }
   }
 }
+window.onload = function () {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get("success") === "true") {
+    alert("Payment succeeded!");
+    // window.location.href = "/index.html";
+  }
+};
