@@ -18,22 +18,36 @@ const AdminPage = () => {
 
       try {
         const decoded = jwtDecode(token);
-        const response = await axios.get(
-          `https://cts-backend-three.vercel.app/api/users/getAllUserDetails`
-        );
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (decoded.exp < currentTime) {
+          alert("Session expired. Please log in again.");
+          localStorage.removeItem("type");
+          window.location.href = "/components/login.html";
+        } else {
+          // console.log("Token is valid.");
+          const type = localStorage.getItem("type");
+          if (type == "admin") {
+            const response = await axios.get(
+              `https://cts-backend-three.vercel.app/api/users/getAllUserDetails`
+            );
 
-        const nonAdminUsers = response.data.users.filter(
-          (user) => user.membership_type !== "admin"
-        );
+            const nonAdminUsers = response.data.users.filter(
+              (user) => user.membership_type !== "admin"
+            );
 
-        setUsers(nonAdminUsers);
+            setUsers(nonAdminUsers);
 
-        const paidCount = nonAdminUsers.filter(
-          (user) => user.payment_status === "Completed"
-        ).length;
+            const paidCount = nonAdminUsers.filter(
+              (user) => user.payment_status === "Completed"
+            ).length;
 
-        setPaidUsers(paidCount);
-        setUnpaidUsers(nonAdminUsers.length - paidCount);
+            setPaidUsers(paidCount);
+            setUnpaidUsers(nonAdminUsers.length - paidCount);
+          } else {
+            alert("access denied");
+            window.location.href = "/";
+          }
+        }
       } catch (error) {
         console.error("Error fetching user details:", error.message);
         alert("User details not found or failed to fetch. Please try again.");

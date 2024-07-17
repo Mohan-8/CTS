@@ -221,35 +221,35 @@ document.addEventListener("DOMContentLoaded", async function () {
 });
 
 // Check if the current page is user.html and block manual access if token is missing
-document.addEventListener("DOMContentLoaded", async function () {
-  if (window.location.pathname.includes("/components/user.html")) {
-    const token = localStorage.getItem("jwtToken");
-    // console.log("Token from localStorage:", token);
+// document.addEventListener("DOMContentLoaded", async function () {
+//   if (window.location.pathname.includes("/components/user.html")) {
+//     const token = localStorage.getItem("jwtToken");
+//     // console.log("Token from localStorage:", token);
 
-    if (!token) {
-      blockAccess();
-      redirectToLoginPage();
-    } else {
-      try {
-        const decoded = parseJwt(token);
-        // console.log("Decoded Token:", decoded);
+//     if (!token) {
+//       blockAccess();
+//       redirectToLoginPage();
+//     } else {
+//       try {
+//         const decoded = parseJwt(token);
+//         // console.log("Decoded Token:", decoded);
 
-        const currentTime = Math.floor(Date.now() / 1000);
-        if (decoded.exp < currentTime) {
-          alert("Session expired. Please log in again.");
-          localStorage.removeItem("type");
-          redirectToLoginPage();
-        } else {
-          // console.log("Token is valid.");
-          updateNavigationForUser();
-        }
-      } catch (error) {
-        console.error("Error decoding token:", error);
-        redirectToLoginPage();
-      }
-    }
-  }
-});
+//         const currentTime = Math.floor(Date.now() / 1000);
+//         if (decoded.exp < currentTime) {
+//           alert("Session expired. Please log in again.");
+//           localStorage.removeItem("type");
+//           redirectToLoginPage();
+//         } else {
+//           // console.log("Token is valid.");
+//           updateNavigationForUser();
+//         }
+//       } catch (error) {
+//         console.error("Error decoding token:", error);
+//         redirectToLoginPage();
+//       }
+//     }
+//   }
+// });
 document.addEventListener("DOMContentLoaded", async function () {
   if (window.location.pathname.includes("/components/admin.html")) {
     const token = localStorage.getItem("type");
@@ -257,6 +257,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (!token) {
       blockAccess();
       redirectToLoginPage();
+    } else if (token == "admin") {
+      blockAccess();
+      redirectToLoginPage();
+      localStorage.removeItem("type");
+      localStorage.removeItem("jwtToken");
     }
   }
 });

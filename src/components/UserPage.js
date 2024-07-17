@@ -32,14 +32,21 @@ const UserPage = () => {
       try {
         const decoded = jwtDecode(token);
         const id = decoded.userId;
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (decoded.exp < currentTime) {
+          alert("Session expired. Please log in again.");
+          localStorage.removeItem("type");
+          window.location.href = "/components/login.html";
+        } else {
+          // console.log("Token is valid.");
+          const response = await axios.get(
+            `https://cts-backend-three.vercel.app/api/users/getUserDetails/${id}`
+          );
 
-        const response = await axios.get(
-          `https://cts-backend-three.vercel.app/api/users/getUserDetails/${id}`
-        );
-
-        setUserDetails(response.data);
-        setpayment_link(response.data.paypal_payment_link);
-        calculateExpiryDate(response.data.payment_at);
+          setUserDetails(response.data);
+          setpayment_link(response.data.paypal_payment_link);
+          calculateExpiryDate(response.data.payment_at);
+        }
       } catch (error) {
         console.error("Error fetching user details:", error.message);
         alert("User details not found or failed to fetch. Please try again.");
