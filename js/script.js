@@ -270,7 +270,7 @@ function blockAccess() {
 }
 
 function redirectToLoginPage() {
-  window.location.href = "/components/login.html";
+  window.location.href = "/CTS/components/login.html";
 }
 
 function parseJwt(token) {

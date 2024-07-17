@@ -12,7 +12,7 @@ const AdminPage = () => {
       const token = localStorage.getItem("jwtToken");
       if (!token) {
         alert("Invalid session. Please log in.");
-        window.location.href = "/components/login.html";
+        window.location.href = "/CTS/components/login.html";
         return;
       }
 
@@ -22,7 +22,7 @@ const AdminPage = () => {
         if (decoded.exp < currentTime) {
           alert("Session expired. Please log in again.");
           localStorage.removeItem("type");
-          window.location.href = "/components/login.html";
+          window.location.href = "/CTS/components/login.html";
         } else {
           // console.log("Token is valid.");
           const type = localStorage.getItem("type");
