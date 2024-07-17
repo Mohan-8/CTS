@@ -254,12 +254,12 @@ window.onload = function () {
   if (window.location.pathname.includes("/components/admin.html")) {
     const token = localStorage.getItem("type");
     console.log("Token from localStorage:", token);
-    if (!token) {
+    if (token == "admin") {
       blockAccess();
       redirectToLoginPage();
       localStorage.removeItem("type");
       localStorage.removeItem("jwtToken");
-    } else if (token == "admin") {
+    } else {
       console.log("ADMIN");
     }
   }
