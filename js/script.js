@@ -283,7 +283,7 @@ function parseJwt(token) {
   return JSON.parse(jsonPayload);
 }
 
-window.onload = function () {
+document.addEventListener("DOMContentLoaded", function () {
   const token = localStorage.getItem("jwtToken");
   if (token) {
     // console.log("Token from localStorage:", token);
@@ -301,7 +301,7 @@ window.onload = function () {
       console.error("Error decoding token:", error);
     }
   }
-};
+});
 
 function updateNavigationForUser() {
   const menuItem = document.getElementById("menu-item-2344");
