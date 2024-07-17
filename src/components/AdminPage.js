@@ -45,7 +45,7 @@ const AdminPage = () => {
             setUnpaidUsers(nonAdminUsers.length - paidCount);
           } else {
             alert("access denied");
-            window.location.href = "/";
+            window.location.href = "https://mohan-8.github.io/CTS/index.html";
           }
         }
       } catch (error) {
@@ -59,7 +59,7 @@ const AdminPage = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("jwtToken");
-    window.location.href = "/";
+    window.location.href = "https://mohan-8.github.io/CTS/index.html";
   };
 
   return (

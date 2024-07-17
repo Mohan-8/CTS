@@ -69,7 +69,7 @@ const UserPage = () => {
       const token = localStorage.getItem("jwtToken");
       if (!token) {
         alert("Invalid session. Please log in.");
-        window.location.href = "/login.html";
+        window.location.href = "/CTS/components/login.html";
         return;
       }
 
@@ -104,7 +104,7 @@ const UserPage = () => {
   const handleLogout = () => {
     localStorage.removeItem("jwtToken");
     localStorage.removeItem("type");
-    window.location.href = "/";
+    window.location.href = "https://mohan-8.github.io/CTS/index.html";
   };
   return (
     <div>
