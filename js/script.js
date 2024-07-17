@@ -257,11 +257,10 @@ window.onload = function () {
     if (!token) {
       blockAccess();
       redirectToLoginPage();
-    } else if (token == "admin") {
-      blockAccess();
-      redirectToLoginPage();
       localStorage.removeItem("type");
       localStorage.removeItem("jwtToken");
+    } else if (token == "admin") {
+      console.log("ADMIN");
     }
   }
 };
