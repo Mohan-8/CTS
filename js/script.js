@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 });
 
 // Check if the current page is user.html and block manual access if token is missing
-window.onload = function () {
+document.addEventListener("DOMContentLoaded", async function () {
   if (window.location.pathname.includes("/components/user.html")) {
     const token = localStorage.getItem("jwtToken");
     // console.log("Token from localStorage:", token);
@@ -249,8 +249,8 @@ window.onload = function () {
       }
     }
   }
-};
-window.onload = function () {
+});
+document.addEventListener("DOMContentLoaded", async function () {
   if (window.location.pathname.includes("/components/admin.html")) {
     const token = localStorage.getItem("type");
     console.log("Token from localStorage:", token);
@@ -259,7 +259,7 @@ window.onload = function () {
       redirectToLoginPage();
     }
   }
-};
+});
 function blockAccess() {
   alert("Access blocked.");
 }
