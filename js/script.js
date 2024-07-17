@@ -250,7 +250,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 //     }
 //   }
 // });
-document.addEventListener("DOMContentLoaded", async function () {
+window.onload = function () {
   if (window.location.pathname.includes("/components/admin.html")) {
     const token = localStorage.getItem("type");
     console.log("Token from localStorage:", token);
@@ -264,7 +264,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       localStorage.removeItem("jwtToken");
     }
   }
-});
+};
 function blockAccess() {
   alert("Access blocked.");
 }
