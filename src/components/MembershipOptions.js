@@ -165,7 +165,7 @@ const MembershipOptions = () => {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:5000/api/users/signup",
+        "https://cts-backend-three.vercel.app/api/users/signup",
         {
           ...formValues,
           membershipType: membership.type,

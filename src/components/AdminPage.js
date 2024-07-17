@@ -19,7 +19,7 @@ const AdminPage = () => {
       try {
         const decoded = jwtDecode(token);
         const response = await axios.get(
-          `http://127.0.0.1:5000/api/users/getAllUserDetails`
+          `https://cts-backend-three.vercel.app/api/users/getAllUserDetails`
         );
 
         const nonAdminUsers = response.data.users.filter(

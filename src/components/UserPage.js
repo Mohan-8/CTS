@@ -34,7 +34,7 @@ const UserPage = () => {
         const id = decoded.userId;
 
         const response = await axios.get(
-          `http://127.0.0.1:5000/api/users/getUserDetails/${id}`
+          `https://cts-backend-three.vercel.app/api/users/getUserDetails/${id}`
         );
 
         setUserDetails(response.data);
@@ -69,8 +69,8 @@ const UserPage = () => {
       const decoded = jwtDecode(token);
       const id = decoded.userId;
       // console.log(userDetails);
-      await axios.put(
-        `http://127.0.0.1:5000/api/users/updateUserDetails/${id}`,
+      await axios.post(
+        `https://cts-backend-three.vercel.app/api/users/updateUserDetails/${id}`,
         userDetails
       );
       alert("Details updated successfully!");
