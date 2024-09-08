@@ -41,9 +41,11 @@ const LoginForm = () => {
         localStorage.setItem("jwtToken", response.data.Token);
         localStorage.setItem("type", response.data.membership_type);
         if (response.data.membership_type == "admin") {
-          window.location.href = "/components/admin.html";
+          window.location.href =
+            "https://mohan-8.github.io/CTS/components/admin.html";
         } else {
-          window.location.href = "/components/user.html";
+          window.location.href =
+            "https://mohan-8.github.io/CTS/components/user.html";
         }
       } catch (error) {
         setErrors({ form: error.response.data.error });
