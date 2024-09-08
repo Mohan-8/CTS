@@ -12,12 +12,18 @@ module.exports = {
   output: {
     filename: "[name].bundle.js",
     path: path.resolve(__dirname, "dist"),
-    publicPath: "/", // Add this line if not already present
+    publicPath: "/", // Ensure this is set correctly
   },
   devServer: {
+    static: {
+      directory: path.join(__dirname, "dist"),
+    },
+    compress: true,
+    port: 9000,
+    historyApiFallback: true, 
     proxy: {
       "/api": {
-        target: "https://cts-backend-red.vercel.app",
+        target: "*",
         secure: false,
         changeOrigin: true,
       },
@@ -47,7 +53,14 @@ module.exports = {
           },
         ],
       },
+      {
+        test: /\.css$/,
+        use: ["style-loader", "css-loader"],
+      },
     ],
+  },
+  resolve: {
+    extensions: [".js", ".jsx", ".css"],
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -71,12 +84,4 @@ module.exports = {
       chunks: ["admin"],
     }),
   ],
-  devServer: {
-    static: {
-      directory: path.join(__dirname, "dist"),
-    },
-    compress: true,
-    port: 9000,
-    historyApiFallback: true, // This helps with client-side routing
-  },
 };
